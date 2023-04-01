@@ -52,6 +52,19 @@ public final class Constants {
 
     public static final double maxModuleSpeed = 6.0;
 
+    public static class AutoConstants {
+      public static final double maxVelocity = 5.0;
+      public static final double maxAcceleration = 3.0;
+
+      public static final double translationalP = 0.0;
+      public static final double translationalI = 0.0;
+      public static final double translationalD = 0.0;
+
+      public static final double rotationalP = 0.0;
+      public static final double rotationalI = 0.0;
+      public static final double rotationalD = 0.0;
+    }
+
     public static class FrontLeftModule {
       public static final int driveID = 4;
       public static final int turnID = 8;

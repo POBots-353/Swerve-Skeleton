@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -69,6 +70,18 @@ public class Swerve extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.maxModuleSpeed);
 
     targetStates = states;
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+    return swerveKinematics;
+  }
+
+  public Pose2d getPose() {
+    return swerveOdometry.getPoseMeters();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    swerveOdometry.resetPosition(navx.getRotation2d(), getModulePositions(), pose);
   }
 
   @Override

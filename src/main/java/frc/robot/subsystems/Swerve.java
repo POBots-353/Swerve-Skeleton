@@ -25,10 +25,14 @@ import frc.robot.Constants.SwerveConstants.FrontRightModule;
 public class Swerve extends SubsystemBase {
   private SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(SwerveConstants.wheelLocations);
 
-  private SwerveModule frontLeftModule = new SwerveModule(FrontLeftModule.driveID, FrontLeftModule.turnID);
-  private SwerveModule frontRightModule = new SwerveModule(FrontRightModule.driveID, FrontRightModule.turnID);
-  private SwerveModule backLeftModule = new SwerveModule(BackLeftModule.driveID, BackLeftModule.turnID);
-  private SwerveModule backRightModule = new SwerveModule(BackRightModule.driveID, BackRightModule.turnID);
+  private SwerveModule frontLeftModule = new SwerveModule(FrontLeftModule.driveID, FrontLeftModule.turnID,
+      FrontLeftModule.angleOffset);
+  private SwerveModule frontRightModule = new SwerveModule(FrontRightModule.driveID, FrontRightModule.turnID,
+      FrontRightModule.angleOffset);
+  private SwerveModule backLeftModule = new SwerveModule(BackLeftModule.driveID, BackLeftModule.turnID,
+      BackLeftModule.angleOffset);
+  private SwerveModule backRightModule = new SwerveModule(BackRightModule.driveID, BackRightModule.turnID,
+      BackRightModule.angleOffset);
 
   private SwerveModuleState[] targetStates = { new SwerveModuleState(), new SwerveModuleState(),
       new SwerveModuleState(), new SwerveModuleState() };
@@ -93,5 +97,17 @@ public class Swerve extends SubsystemBase {
     backRightModule.setState(targetStates[3]);
 
     field.setRobotPose(swerveOdometry.update(navx.getRotation2d(), getModulePositions()));
+
+    SmartDashboard.putNumber("Front Left Velocity", frontLeftModule.getVelocity());
+    SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getTurnDegrees());
+
+    SmartDashboard.putNumber("Front Right Velocity", frontRightModule.getVelocity());
+    SmartDashboard.putNumber("Front Right Rotation", frontRightModule.getTurnDegrees());
+
+    SmartDashboard.putNumber("Back Left Velocity", backLeftModule.getVelocity());
+    SmartDashboard.putNumber("Back Left Rotation", backLeftModule.getTurnDegrees());
+
+    SmartDashboard.putNumber("Back Right Velocity", backRightModule.getVelocity());
+    SmartDashboard.putNumber("Back Right Rotation", backRightModule.getTurnDegrees());
   }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -56,11 +57,11 @@ public final class Constants {
       public static final double maxVelocity = 5.0;
       public static final double maxAcceleration = 3.0;
 
-      public static final double translationalP = 0.0;
+      public static final double translationalP = 0.75;
       public static final double translationalI = 0.0;
       public static final double translationalD = 0.0;
 
-      public static final double rotationalP = 0.0;
+      public static final double rotationalP = 0.75;
       public static final double rotationalI = 0.0;
       public static final double rotationalD = 0.0;
     }
@@ -68,21 +69,25 @@ public final class Constants {
     public static class FrontLeftModule {
       public static final int driveID = 4;
       public static final int turnID = 8;
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
     }
 
     public static class FrontRightModule {
       public static final int driveID = 2;
       public static final int turnID = 6;
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
     }
 
     public static class BackLeftModule {
       public static final int driveID = 1;
       public static final int turnID = 5;
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
     }
 
     public static class BackRightModule {
       public static final int driveID = 3;
       public static final int turnID = 7;
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
     }
   }
 }

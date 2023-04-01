@@ -36,7 +36,7 @@ public class SwerveModule {
 
     private double prevVelocity = 0.0;
 
-    public SwerveModule(int driveID, int turnID) {
+    public SwerveModule(int driveID, int turnID, Rotation2d angleOffset) {
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         turnMotor = new CANSparkMax(turnID, MotorType.kBrushless);
 
@@ -44,7 +44,11 @@ public class SwerveModule {
         turnEncoder = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
         configureDriveMotor();
-        configureTurnMotor();
+        configureTurnMotor(angleOffset);
+    }
+
+    public SwerveModule(int driveID, int turnID) {
+        this(driveID, turnID, new Rotation2d(0));
     }
 
     public void configureDriveMotor() {
@@ -57,7 +61,7 @@ public class SwerveModule {
         driveEncoder.setVelocityConversionFactor(SwerveConstants.driveVelocityConversion);
     }
 
-    public void configureTurnMotor() {
+    public void configureTurnMotor(Rotation2d angleOffset) {
         turnPID = turnMotor.getPIDController();
 
         turnPID.setP(SwerveConstants.turnP);
@@ -70,6 +74,7 @@ public class SwerveModule {
         turnPID.setPositionPIDWrappingMaxInput(1.0);
 
         turnEncoder.setInverted(true);
+        turnEncoder.setZeroOffset(angleOffset.getRotations());
     }
 
     public void setState(SwerveModuleState state) {
@@ -91,5 +96,21 @@ public class SwerveModule {
         Rotation2d angle = Rotation2d.fromRotations(turnEncoder.getPosition());
 
         return new SwerveModuleState(driveEncoder.getVelocity(), angle);
+    }
+
+    public double getVelocity() {
+        return driveEncoder.getVelocity();
+    }
+
+    public Rotation2d getAngle() {
+        return Rotation2d.fromRotations(turnEncoder.getPosition());
+    }
+
+    public double getTurnRotations() {
+        return getAngle().getRotations();
+    }
+
+    public double getTurnDegrees() {
+        return getAngle().getDegrees();
     }
 }

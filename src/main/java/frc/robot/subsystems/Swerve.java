@@ -61,8 +61,22 @@ public class Swerve extends SubsystemBase {
         backLeftModule.getModuleState(), backRightModule.getModuleState() };
   }
 
+  /**
+   * Drives the robot relative to the field
+   * 
+   * @param x    The x velocity of the robot. Positive X is going to the right
+   *             when you are standing behind the alliance wall
+   * @param y    The y velocity of the robot. Positive Y is going away from your
+   *             alliance wall
+   * @param turn The angular velocity of the robot
+   */
   public void driveFieldOriented(double x, double y, double turn) {
-    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(y, x, turn, navx.getRotation2d());
+    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(y, -x, turn, navx.getRotation2d());
+    setChassisSpeeds(chassisSpeeds);
+  }
+
+  public void driveRobotOriented(double x, double y, double turn) {
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-y, x, turn);
     setChassisSpeeds(chassisSpeeds);
   }
 

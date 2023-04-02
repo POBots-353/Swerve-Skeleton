@@ -15,19 +15,31 @@ public class SwerveDrive extends CommandBase {
   private DoubleSupplier ySpeed;
   private DoubleSupplier angleSpeed;
 
+  private double maxTranslationalSpeed;
+  private double maxAngularSpeed;
+
   private Swerve swerve;
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, DoubleSupplier angleSpeedSupplier,
-      Swerve swerve) {
+      Swerve swerve, double maxTranslationalSpeed, double maxAngularSpeed) {
     this.xSpeed = xSpeedSupplier;
     this.ySpeed = ySpeedSupplier;
     this.angleSpeed = angleSpeedSupplier;
+
+    this.maxTranslationalSpeed = maxTranslationalSpeed;
+    this.maxAngularSpeed = maxAngularSpeed;
 
     this.swerve = swerve;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
+  }
+
+  public SwerveDrive(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, DoubleSupplier angleSpeedSupplier,
+      Swerve swerve) {
+    this(xSpeedSupplier, ySpeedSupplier, angleSpeedSupplier, swerve, SwerveConstants.maxTranslationalSpeed,
+        SwerveConstants.maxAngularSpeed);
   }
 
   // Called when the command is initially scheduled.
@@ -38,9 +50,9 @@ public class SwerveDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xMetersPerSecond = xSpeed.getAsDouble() * SwerveConstants.maxTranslationalSpeed;
-    double yMetersPerSecond = -ySpeed.getAsDouble() * SwerveConstants.maxTranslationalSpeed;
-    double angularRadiansPerSecond = angleSpeed.getAsDouble() * SwerveConstants.maxAngularSpeed;
+    double xMetersPerSecond = xSpeed.getAsDouble() * maxTranslationalSpeed;
+    double yMetersPerSecond = -ySpeed.getAsDouble() * maxTranslationalSpeed;
+    double angularRadiansPerSecond = angleSpeed.getAsDouble() * maxAngularSpeed;
 
     swerve.driveFieldOriented(xMetersPerSecond, yMetersPerSecond, angularRadiansPerSecond);
   }

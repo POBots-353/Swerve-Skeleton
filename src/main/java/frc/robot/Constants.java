@@ -26,14 +26,17 @@ public final class Constants {
   }
 
   public static class SwerveConstants {
-    public static final Translation2d frontLeft = new Translation2d(0.353, 0.353);
-    public static final Translation2d frontRight = new Translation2d(0.353, -0.353);
-    public static final Translation2d backLeft = new Translation2d(-0.353, 0.353);
-    public static final Translation2d backRight = new Translation2d(-0.353, -0.353);
+    public static final double WIDTH = 0.353;
+    public static final double LENGTH = 0.353;
+
+    public static final Translation2d frontLeft = new Translation2d(WIDTH * 0.5, LENGTH * 0.5);
+    public static final Translation2d frontRight = new Translation2d(WIDTH * 0.5, LENGTH * -0.5);
+    public static final Translation2d backLeft = new Translation2d(WIDTH * -0.5, LENGTH * 0.5);
+    public static final Translation2d backRight = new Translation2d(WIDTH * -0.5, LENGTH * -0.5);
 
     public static final Translation2d[] wheelLocations = { frontLeft, frontRight, backLeft, backRight };
 
-    public static final double maxTranslationalSpeed = 5.0;
+    public static final double maxTranslationalSpeed = 4.0;
     public static final double maxAngularSpeed = Units.degreesToRadians(180.0);
 
     public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
@@ -69,7 +72,7 @@ public final class Constants {
     public static class FrontLeftModule {
       public static final int driveID = 4;
       public static final int turnID = 8;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270);
     }
 
     public static class FrontRightModule {
@@ -81,13 +84,13 @@ public final class Constants {
     public static class BackLeftModule {
       public static final int driveID = 1;
       public static final int turnID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(180);
     }
 
     public static class BackRightModule {
       public static final int driveID = 3;
       public static final int turnID = 7;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(90);
     }
   }
 }

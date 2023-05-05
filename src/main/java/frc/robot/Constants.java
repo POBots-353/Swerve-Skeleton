@@ -72,24 +72,28 @@ public final class Constants {
     public static class FrontLeftModule {
       public static final int driveID = 4;
       public static final int turnID = 8;
+      public static final int encoderID = 12;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270);
     }
 
     public static class FrontRightModule {
       public static final int driveID = 2;
       public static final int turnID = 6;
+      public static final int encoderID = 10;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);
     }
 
     public static class BackLeftModule {
       public static final int driveID = 1;
       public static final int turnID = 5;
+      public static final int encoderID = 9;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(180);
     }
 
     public static class BackRightModule {
       public static final int driveID = 3;
       public static final int turnID = 7;
+      public static final int encoderID = 11;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(90);
     }
   }

@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -83,7 +84,7 @@ public class FalconSwerveModule implements SwerveModule {
     turnMotor.set(ControlMode.PercentOutput,
         turnPIDController.calculate(getAngle().getDegrees(), optimizedState.angle.getDegrees()));
 
-    double currentVelocity = getVelocity();
+    double currentVelocity = optimizedState.speedMetersPerSecond;
     double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
 
     driveMotor.set(ControlMode.Velocity, Conversions.mpsToFalcon(optimizedState.speedMetersPerSecond),
@@ -113,6 +114,11 @@ public class FalconSwerveModule implements SwerveModule {
   }
 
   @Override
+  public Rotation2d getAbsoluteAngle() {
+    return Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition());
+  }
+
+  @Override
   public double getTurnRotations() {
     return getAngle().getRotations();
   }
@@ -122,7 +128,8 @@ public class FalconSwerveModule implements SwerveModule {
     return getAngle().getDegrees();
   }
 
-  public Rotation2d getAbsoulteAngle() {
-    return Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition());
+  @Override
+  public double getAbsoluteTurnDegrees() {
+    return MathUtil.inputModulus(getAbsoluteAngle().getDegrees(), 0, 360);
   }
 }

@@ -4,15 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -25,7 +27,11 @@ public class SparkMaxSwerveModule implements SwerveModule {
   private CANSparkMax turnMotor;
 
   private RelativeEncoder driveEncoder;
-  private SparkMaxAbsoluteEncoder turnEncoder;
+  private RelativeEncoder turnEncoder;
+
+  private CANCoder turnEncoderAbsolute;
+
+  private Rotation2d angleOffset;
 
   private SparkMaxPIDController drivePID;
 
@@ -36,19 +42,26 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
   private double prevVelocity = 0.0;
 
-  public SparkMaxSwerveModule(int driveID, int turnID, Rotation2d angleOffset) {
+  public SparkMaxSwerveModule(int driveID, int turnID, int encoderID, Rotation2d angleOffset) {
     driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
     turnMotor = new CANSparkMax(turnID, MotorType.kBrushless);
 
     driveEncoder = driveMotor.getEncoder();
-    turnEncoder = turnMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    turnEncoder = turnMotor.getEncoder();
+
+    turnEncoderAbsolute = new CANCoder(encoderID);
+
+    this.angleOffset = angleOffset;
 
     configureDriveMotor();
-    configureTurnMotor(angleOffset);
+    configureTurnMotor();
+    configureAngleEncoder();
+
+    resetToAbsolute();
   }
 
-  public SparkMaxSwerveModule(int driveID, int turnID) {
-    this(driveID, turnID, new Rotation2d(0));
+  public SparkMaxSwerveModule(int driveID, int turnID, int encoderID) {
+    this(driveID, turnID, encoderID, new Rotation2d(0));
   }
 
   public void configureDriveMotor() {
@@ -61,29 +74,42 @@ public class SparkMaxSwerveModule implements SwerveModule {
     driveEncoder.setVelocityConversionFactor(SwerveConstants.driveVelocityConversion);
   }
 
-  public void configureTurnMotor(Rotation2d angleOffset) {
+  public void configureTurnMotor() {
     turnPID = turnMotor.getPIDController();
 
     turnPID.setP(SwerveConstants.turnP);
     turnPID.setD(SwerveConstants.turnD);
-    turnPID.setFeedbackDevice(turnEncoder);
     turnPID.setOutputRange(-1, 1);
 
     turnPID.setPositionPIDWrappingEnabled(true);
     turnPID.setPositionPIDWrappingMinInput(0.0);
     turnPID.setPositionPIDWrappingMaxInput(1.0);
+  }
 
-    turnEncoder.setInverted(true);
-    turnEncoder.setZeroOffset(angleOffset.getRotations());
+  private void configureAngleEncoder() {
+    turnEncoderAbsolute.configFactoryDefault();
+
+    turnEncoderAbsolute.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
+    turnEncoderAbsolute.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+  }
+
+  private void resetToAbsolute() {
+    Rotation2d position = Rotation2d
+        .fromRotations(turnEncoderAbsolute.getAbsolutePosition() - angleOffset.getDegrees());
+
+    turnEncoder.setPosition(position.getRotations());
   }
 
   @Override
   public void setState(SwerveModuleState state) {
-    turnPID.setReference(state.angle.getRotations(), ControlType.kPosition);
+    SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
 
-    double currentVelocity = driveEncoder.getVelocity();
+    turnPID.setReference(optimizedState.angle.getRotations(), ControlType.kPosition);
+
+    double currentVelocity = optimizedState.speedMetersPerSecond;
     double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
-    drivePID.setReference(state.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward, ArbFFUnits.kVoltage);
+    drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward,
+        ArbFFUnits.kVoltage);
 
     prevVelocity = currentVelocity;
   }
@@ -110,6 +136,11 @@ public class SparkMaxSwerveModule implements SwerveModule {
   }
 
   @Override
+  public Rotation2d getAbsoluteAngle() {
+    return Rotation2d.fromDegrees(turnEncoderAbsolute.getAbsolutePosition());
+  }
+
+  @Override
   public double getTurnRotations() {
     return getAngle().getRotations();
   }
@@ -117,5 +148,10 @@ public class SparkMaxSwerveModule implements SwerveModule {
   @Override
   public double getTurnDegrees() {
     return getAngle().getDegrees();
+  }
+
+  @Override
+  public double getAbsoluteTurnDegrees() {
+    return MathUtil.inputModulus(getAbsoluteAngle().getDegrees(), 0, 360);
   }
 }

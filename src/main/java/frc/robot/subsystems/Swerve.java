@@ -26,13 +26,13 @@ public class Swerve extends SubsystemBase {
   private SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(SwerveConstants.wheelLocations);
 
   private SwerveModule frontLeftModule = new SparkMaxSwerveModule(FrontLeftModule.driveID, FrontLeftModule.turnID,
-      FrontLeftModule.angleOffset);
+      FrontLeftModule.encoderID, FrontLeftModule.angleOffset);
   private SwerveModule frontRightModule = new SparkMaxSwerveModule(FrontRightModule.driveID, FrontRightModule.turnID,
-      FrontRightModule.angleOffset);
+      FrontRightModule.encoderID, FrontRightModule.angleOffset);
   private SwerveModule backLeftModule = new SparkMaxSwerveModule(BackLeftModule.driveID, BackLeftModule.turnID,
-      BackLeftModule.angleOffset);
+      BackLeftModule.encoderID, BackLeftModule.angleOffset);
   private SwerveModule backRightModule = new SparkMaxSwerveModule(BackRightModule.driveID, BackRightModule.turnID,
-      BackRightModule.angleOffset);
+      BackRightModule.encoderID, BackRightModule.angleOffset);
 
   private SwerveModuleState[] targetStates = { new SwerveModuleState(), new SwerveModuleState(),
       new SwerveModuleState(), new SwerveModuleState() };
@@ -114,14 +114,18 @@ public class Swerve extends SubsystemBase {
 
     SmartDashboard.putNumber("Front Left Velocity", frontLeftModule.getVelocity());
     SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getTurnDegrees());
+    SmartDashboard.putNumber("Front Left Absolute Rotation", frontLeftModule.getAbsoluteTurnDegrees());
 
     SmartDashboard.putNumber("Front Right Velocity", frontRightModule.getVelocity());
     SmartDashboard.putNumber("Front Right Rotation", frontRightModule.getTurnDegrees());
+    SmartDashboard.putNumber("Front Right Absolute Rotation", frontRightModule.getAbsoluteTurnDegrees());
 
     SmartDashboard.putNumber("Back Left Velocity", backLeftModule.getVelocity());
     SmartDashboard.putNumber("Back Left Rotation", backLeftModule.getTurnDegrees());
+    SmartDashboard.putNumber("Back Left Absolute Rotation", backLeftModule.getAbsoluteTurnDegrees());
 
     SmartDashboard.putNumber("Back Right Velocity", backRightModule.getVelocity());
     SmartDashboard.putNumber("Back Right Rotation", backRightModule.getTurnDegrees());
+    SmartDashboard.putNumber("Back Right Absolute Rotation", backRightModule.getAbsoluteTurnDegrees());
   }
 }

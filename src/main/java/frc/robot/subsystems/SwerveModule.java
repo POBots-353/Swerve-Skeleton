@@ -15,7 +15,11 @@ public interface SwerveModule {
 
   public Rotation2d getAngle();
 
+  public Rotation2d getAbsoluteAngle();
+
   public double getTurnRotations();
 
   public double getTurnDegrees();
+
+  public double getAbsoluteTurnDegrees();
 }

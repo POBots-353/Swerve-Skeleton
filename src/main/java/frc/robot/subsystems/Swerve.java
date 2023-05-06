@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -68,15 +69,15 @@ public class Swerve extends SubsystemBase {
    *             when you are standing behind the alliance wall
    * @param y    The y velocity of the robot. Positive Y is going away from your
    *             alliance wall
-   * @param turn The angular velocity of the robot
+   * @param turn The angular velocity of the robot (CW is +)
    */
   public void driveFieldOriented(double x, double y, double turn) {
-    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(y, -x, turn, navx.getRotation2d());
+    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(y, -x, -turn, getRotation());
     setChassisSpeeds(chassisSpeeds);
   }
 
   public void driveRobotOriented(double x, double y, double turn) {
-    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-y, x, turn);
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-y, x, -turn);
     setChassisSpeeds(chassisSpeeds);
   }
 
@@ -94,12 +95,20 @@ public class Swerve extends SubsystemBase {
     return swerveKinematics;
   }
 
+  public Rotation2d getRotation() {
+    if (SwerveConstants.gyroInverted) {
+      return navx.getRotation2d().unaryMinus();
+    } else {
+      return navx.getRotation2d();
+    }
+  }
+
   public Pose2d getPose() {
     return swerveOdometry.getPoseMeters();
   }
 
   public void resetOdometry(Pose2d pose) {
-    swerveOdometry.resetPosition(navx.getRotation2d(), getModulePositions(), pose);
+    swerveOdometry.resetPosition(getRotation(), getModulePositions(), pose);
   }
 
   @Override
@@ -110,7 +119,7 @@ public class Swerve extends SubsystemBase {
     backLeftModule.setState(targetStates[2]);
     backRightModule.setState(targetStates[3]);
 
-    field.setRobotPose(swerveOdometry.update(navx.getRotation2d(), getModulePositions()));
+    field.setRobotPose(swerveOdometry.update(getRotation(), getModulePositions()));
 
     SmartDashboard.putNumber("Front Left Velocity", frontLeftModule.getVelocity());
     SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getTurnDegrees());

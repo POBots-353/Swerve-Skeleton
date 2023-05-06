@@ -56,6 +56,8 @@ public class FalconSwerveModule implements SwerveModule {
 
     driveMotor.configPeakOutputForward(1.0);
     driveMotor.configPeakOutputReverse(-1.0);
+
+    driveMotor.setInverted(SwerveConstants.driveMotorInverted);
   }
 
   private void configureTurnMotor() {
@@ -63,6 +65,8 @@ public class FalconSwerveModule implements SwerveModule {
 
     turnMotor.configPeakOutputForward(1.0);
     turnMotor.configPeakOutputReverse(-1.0);
+
+    turnMotor.setInverted(SwerveConstants.turnMotorInverted);
   }
 
   private void configureAngleEncoder() {
@@ -70,10 +74,13 @@ public class FalconSwerveModule implements SwerveModule {
 
     turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
     turnEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+
+    turnEncoder.configSensorDirection(SwerveConstants.canCoderInverted);
   }
 
   private void resetToAbsolute() {
     double position = Conversions.degreesToFalcon(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
+    
     turnMotor.setSelectedSensorPosition(position);
   }
 

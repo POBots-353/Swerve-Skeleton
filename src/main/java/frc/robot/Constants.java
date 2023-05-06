@@ -45,13 +45,19 @@ public final class Constants {
     public static final double drivePositionConversion = wheelCircumference * gearRatio;
     public static final double driveVelocityConversion = drivePositionConversion / 60;
 
+    public static final boolean gyroInverted = true;
+
+    public static final boolean driveMotorInverted = false;
+    public static final boolean turnMotorInverted = true;
+    public static final boolean canCoderInverted = false;
+
     public static final double driveP = 0.25;
 
     public static final double driveKs = 0.2;
     public static final double driveKv = 2.5;
     public static final double driveKa = 0.34;
 
-    public static final double turnP = 3.25;
+    public static final double turnP = 0.30;
     public static final double turnD = 0.10;
 
     public static final double maxModuleSpeed = 6.0;

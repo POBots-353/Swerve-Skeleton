@@ -91,7 +91,7 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
   private void resetToAbsolute() {
     Rotation2d position = Rotation2d
-        .fromRotations(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
+        .fromDegrees(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
 
     turnEncoder.setPosition(position.getDegrees());
   }
@@ -104,6 +104,7 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
     double currentVelocity = optimizedState.speedMetersPerSecond;
     double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
+
     drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward,
         ArbFFUnits.kVoltage);
 

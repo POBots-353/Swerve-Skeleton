@@ -79,9 +79,9 @@ public class FalconSwerveModule implements SwerveModule {
   }
 
   private void resetToAbsolute() {
-    double position = Conversions.degreesToFalcon(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
-    
-    turnMotor.setSelectedSensorPosition(position);
+    Rotation2d position = Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
+
+    turnEncoder.setPosition(position.getDegrees());
   }
 
   @Override
@@ -117,7 +117,7 @@ public class FalconSwerveModule implements SwerveModule {
 
   @Override
   public Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(Conversions.falconToDegrees(turnMotor.getSelectedSensorPosition()));
+    return Rotation2d.fromDegrees(turnEncoder.getPosition());
   }
 
   @Override

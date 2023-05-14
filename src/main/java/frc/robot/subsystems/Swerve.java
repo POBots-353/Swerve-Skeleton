@@ -28,10 +28,13 @@ public class Swerve extends SubsystemBase {
 
   private SwerveModule frontLeftModule = new SparkMaxSwerveModule(FrontLeftModule.driveID, FrontLeftModule.turnID,
       FrontLeftModule.encoderID, FrontLeftModule.angleOffset);
+
   private SwerveModule frontRightModule = new SparkMaxSwerveModule(FrontRightModule.driveID, FrontRightModule.turnID,
       FrontRightModule.encoderID, FrontRightModule.angleOffset);
+
   private SwerveModule backLeftModule = new SparkMaxSwerveModule(BackLeftModule.driveID, BackLeftModule.turnID,
       BackLeftModule.encoderID, BackLeftModule.angleOffset);
+
   private SwerveModule backRightModule = new SparkMaxSwerveModule(BackRightModule.driveID, BackRightModule.turnID,
       BackRightModule.encoderID, BackRightModule.angleOffset);
 
@@ -96,11 +99,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public Rotation2d getRotation() {
-    if (SwerveConstants.gyroInverted) {
-      return navx.getRotation2d().unaryMinus();
-    } else {
-      return navx.getRotation2d();
-    }
+    return navx.getRotation2d();
   }
 
   public Pose2d getPose() {

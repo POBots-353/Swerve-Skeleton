@@ -36,7 +36,7 @@ public class RobotContainer {
     configureBindings();
 
     swerve.setDefaultCommand(
-        new SwerveDrive(driverController::getLeftX, driverController::getLeftY, driverController::getRightX, swerve));
+        new SwerveDrive(driverController::getLeftY, driverController::getLeftX, driverController::getRightX, swerve));
   }
 
   /**

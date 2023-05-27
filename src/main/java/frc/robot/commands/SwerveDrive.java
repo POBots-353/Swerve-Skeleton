@@ -11,8 +11,8 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.Swerve;
 
 public class SwerveDrive extends CommandBase {
-  private DoubleSupplier xSpeed;
-  private DoubleSupplier ySpeed;
+  private DoubleSupplier strafeSpeed;
+  private DoubleSupplier forwardSpeed;
   private DoubleSupplier angleSpeed;
 
   private double maxTranslationalSpeed;
@@ -21,10 +21,10 @@ public class SwerveDrive extends CommandBase {
   private Swerve swerve;
 
   /** Creates a new SwerveDrive. */
-  public SwerveDrive(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, DoubleSupplier angleSpeedSupplier,
-      Swerve swerve, double maxTranslationalSpeed, double maxAngularSpeed) {
-    this.xSpeed = xSpeedSupplier;
-    this.ySpeed = ySpeedSupplier;
+  public SwerveDrive(DoubleSupplier forwardSpeedSupplier, DoubleSupplier strafeSpeedSupplier,
+      DoubleSupplier angleSpeedSupplier, double maxTranslationalSpeed, double maxAngularSpeed, Swerve swerve) {
+    this.forwardSpeed = forwardSpeedSupplier;
+    this.strafeSpeed = strafeSpeedSupplier;
     this.angleSpeed = angleSpeedSupplier;
 
     this.maxTranslationalSpeed = maxTranslationalSpeed;
@@ -36,10 +36,10 @@ public class SwerveDrive extends CommandBase {
     addRequirements(swerve);
   }
 
-  public SwerveDrive(DoubleSupplier xSpeedSupplier, DoubleSupplier ySpeedSupplier, DoubleSupplier angleSpeedSupplier,
-      Swerve swerve) {
-    this(xSpeedSupplier, ySpeedSupplier, angleSpeedSupplier, swerve, SwerveConstants.maxTranslationalSpeed,
-        SwerveConstants.maxAngularSpeed);
+  public SwerveDrive(DoubleSupplier forwardSpeedSupplier, DoubleSupplier strafeSpeedSupplier,
+      DoubleSupplier angleSpeedSupplier, Swerve swerve) {
+    this(forwardSpeedSupplier, strafeSpeedSupplier, angleSpeedSupplier, SwerveConstants.maxTranslationalSpeed,
+        SwerveConstants.maxAngularSpeed, swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -50,11 +50,11 @@ public class SwerveDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xMetersPerSecond = xSpeed.getAsDouble() * maxTranslationalSpeed;
-    double yMetersPerSecond = -ySpeed.getAsDouble() * maxTranslationalSpeed;
+    double strafeMetersPerSecond = strafeSpeed.getAsDouble() * maxTranslationalSpeed;
+    double forwardMetersPerSecond = -forwardSpeed.getAsDouble() * maxTranslationalSpeed;
     double angularRadiansPerSecond = angleSpeed.getAsDouble() * maxAngularSpeed;
 
-    swerve.driveFieldOriented(xMetersPerSecond, yMetersPerSecond, angularRadiansPerSecond);
+    swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angularRadiansPerSecond);
   }
 
   // Called once the command ends or is interrupted.

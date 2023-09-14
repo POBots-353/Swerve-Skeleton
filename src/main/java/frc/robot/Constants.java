@@ -36,14 +36,17 @@ public final class Constants {
 
     public static final Translation2d[] wheelLocations = { frontLeft, frontRight, backLeft, backRight };
 
-    public static final double maxTranslationalSpeed = 3.53;
+    public static final double maxTranslationalSpeed = Units.feetToMeters(14.5);
     public static final double maxAngularSpeed = Units.degreesToRadians(180.0);
 
     public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
-    public static final double gearRatio = 1 / 6.12;
+    public static final double driveGearRatio = 1 / 6.12;
+    public static final double turnGearRatio = 1 / (150 / 7);
 
-    public static final double drivePositionConversion = wheelCircumference * gearRatio;
+    public static final double drivePositionConversion = wheelCircumference * driveGearRatio;
     public static final double driveVelocityConversion = drivePositionConversion / 60;
+
+    public static final double turnPositionConversion = 2 * Math.PI * turnGearRatio;
 
     public static final boolean driveMotorInverted = false;
     public static final boolean turnMotorInverted = true;
@@ -55,20 +58,20 @@ public final class Constants {
     public static final double driveKv = 2.5;
     public static final double driveKa = 0.34;
 
-    public static final double turnP = 0.050;
-    public static final double turnD = 0.010;
+    public static final double turnP = 0.3;
+    public static final double turnD = 0;
 
-    public static final double maxModuleSpeed = 4.2;
+    public static final double maxModuleSpeed = Units.feetToMeters(14.5);
 
     public static class AutoConstants {
       public static final double maxVelocity = 2.5;
       public static final double maxAcceleration = 2.5;
 
-      public static final double translationalP = 0.75;
+      public static final double translationalP = 4.0;
       public static final double translationalI = 0.0;
       public static final double translationalD = 0.0;
 
-      public static final double rotationalP = 0.75;
+      public static final double rotationalP = 8.0;
       public static final double rotationalI = 0.0;
       public static final double rotationalD = 0.0;
     }

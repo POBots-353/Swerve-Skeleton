@@ -28,17 +28,17 @@ public class SparkMaxSwerveModule implements SwerveModule {
   private CANSparkMax turnMotor;
 
   private RelativeEncoder driveEncoder;
+  private RelativeEncoder turnEncoder;
 
-  private CANCoder turnEncoder;
+  private CANCoder canEncoder;
 
   private Rotation2d angleOffset;
 
   private SparkMaxPIDController drivePID;
+  private SparkMaxPIDController turnPID;
 
   private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.driveKs,
       SwerveConstants.driveKv, SwerveConstants.driveKa);
-
-  private PIDController turnPIDController = new PIDController(SwerveConstants.turnP, 0, SwerveConstants.turnD);
 
   private double prevVelocity = 0.0;
 
@@ -47,8 +47,9 @@ public class SparkMaxSwerveModule implements SwerveModule {
     turnMotor = new CANSparkMax(turnID, MotorType.kBrushless);
 
     driveEncoder = driveMotor.getEncoder();
+    turnEncoder = turnMotor.getEncoder();
 
-    turnEncoder = new CANCoder(encoderID);
+    canEncoder = new CANCoder(encoderID);
 
     this.angleOffset = angleOffset;
 
@@ -76,31 +77,40 @@ public class SparkMaxSwerveModule implements SwerveModule {
   }
 
   public void configureTurnMotor() {
-    turnPIDController.enableContinuousInput(-180, 180);
-
     turnMotor.setInverted(SwerveConstants.turnMotorInverted);
+    turnEncoder.setPositionConversionFactor(SwerveConstants.turnPositionConversion);
+
+    turnPID = turnMotor.getPIDController();
+
+    turnPID.setP(SwerveConstants.turnP);
+    turnPID.setD(SwerveConstants.turnD);
+    turnPID.setOutputRange(-1.0, 1.0);
+
+    turnPID.setPositionPIDWrappingEnabled(true);
+    turnPID.setPositionPIDWrappingMinInput(-Math.PI);
+    turnPID.setPositionPIDWrappingMaxInput(Math.PI);
   }
 
   private void configureAngleEncoder() {
-    turnEncoder.configFactoryDefault();
+    canEncoder.configFactoryDefault();
 
-    turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
-    turnEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
-    turnEncoder.configSensorDirection(SwerveConstants.canCoderInverted);
+    canEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
+    canEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+    canEncoder.configSensorDirection(SwerveConstants.canCoderInverted);
   }
 
   private void resetToAbsolute() {
     Rotation2d position = Rotation2d
-        .fromDegrees(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
+        .fromDegrees(canEncoder.getAbsolutePosition() - angleOffset.getDegrees());
 
-    turnEncoder.setPosition(position.getDegrees());
+    turnEncoder.setPosition(position.getRadians());
   }
 
   @Override
   public void setState(SwerveModuleState state) {
     SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
 
-    turnMotor.set(turnPIDController.calculate(getAngle().getDegrees(), optimizedState.angle.getDegrees()));
+    turnPID.setReference(optimizedState.angle.getRadians(), ControlType.kPosition);
 
     double currentVelocity = optimizedState.speedMetersPerSecond;
     double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
@@ -128,12 +138,12 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
   @Override
   public Rotation2d getAngle() {
-    return Rotation2d.fromRotations(turnEncoder.getPosition());
+    return Rotation2d.fromRadians(turnEncoder.getPosition());
   }
 
   @Override
   public Rotation2d getAbsoluteAngle() {
-    return Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition());
+    return Rotation2d.fromDegrees(canEncoder.getAbsolutePosition());
   }
 
   @Override
@@ -148,6 +158,6 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
   @Override
   public double getAbsoluteTurnDegrees() {
-    return MathUtil.inputModulus(getAbsoluteAngle().getDegrees(), 0, 360);
+    return getAbsoluteAngle().getDegrees();
   }
 }

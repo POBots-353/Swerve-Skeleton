@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.util.CTREModuleState;
 import frc.robot.util.Conversions;
 
 /** Add your docs here. */
@@ -25,13 +26,11 @@ public class FalconSwerveModule implements SwerveModule {
   private TalonFX driveMotor;
   private TalonFX turnMotor;
 
-  private CANCoder turnEncoder;
+  private CANCoder canEncoder;
 
   private Rotation2d angleOffset;
 
   private double prevVelocity = 0.0;
-
-  private PIDController turnPIDController = new PIDController(SwerveConstants.turnP, 0, SwerveConstants.turnD);
 
   private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(SwerveConstants.driveKs,
       SwerveConstants.driveKv, SwerveConstants.driveKa);
@@ -40,7 +39,7 @@ public class FalconSwerveModule implements SwerveModule {
     driveMotor = new TalonFX(driveID);
     turnMotor = new TalonFX(turnID);
 
-    turnEncoder = new CANCoder(encoderID);
+    canEncoder = new CANCoder(encoderID);
 
     this.angleOffset = angleOffset;
 
@@ -61,35 +60,35 @@ public class FalconSwerveModule implements SwerveModule {
   }
 
   private void configureTurnMotor() {
-    turnPIDController.enableContinuousInput(-180, 180);
-
     turnMotor.configPeakOutputForward(1.0);
     turnMotor.configPeakOutputReverse(-1.0);
 
     turnMotor.setInverted(SwerveConstants.turnMotorInverted);
+
+    turnMotor.config_kP(0, SwerveConstants.turnP);
+    turnMotor.config_kD(0, SwerveConstants.turnD);
   }
 
   private void configureAngleEncoder() {
-    turnEncoder.configFactoryDefault();
+    canEncoder.configFactoryDefault();
 
-    turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
-    turnEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+    canEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
+    canEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
 
-    turnEncoder.configSensorDirection(SwerveConstants.canCoderInverted);
+    canEncoder.configSensorDirection(SwerveConstants.canCoderInverted);
   }
 
   private void resetToAbsolute() {
-    Rotation2d position = Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition() - angleOffset.getDegrees());
+    Rotation2d position = Rotation2d.fromDegrees(canEncoder.getAbsolutePosition() - angleOffset.getDegrees());
 
-    turnEncoder.setPosition(position.getDegrees());
+    turnMotor.setSelectedSensorPosition(Conversions.degreesToFalcon(position.getDegrees()));
   }
 
   @Override
   public void setState(SwerveModuleState state) {
-    SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
+    SwerveModuleState optimizedState = CTREModuleState.optimize(state, getAngle());
 
-    turnMotor.set(ControlMode.PercentOutput,
-        turnPIDController.calculate(getAngle().getDegrees(), optimizedState.angle.getDegrees()));
+    turnMotor.set(ControlMode.Position, Conversions.degreesToFalcon(optimizedState.angle.getDegrees()));
 
     double currentVelocity = optimizedState.speedMetersPerSecond;
     double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
@@ -117,12 +116,12 @@ public class FalconSwerveModule implements SwerveModule {
 
   @Override
   public Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(turnEncoder.getPosition());
+    return Rotation2d.fromDegrees(Conversions.falconToDegrees(turnMotor.getSelectedSensorPosition()));
   }
 
   @Override
   public Rotation2d getAbsoluteAngle() {
-    return Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition());
+    return Rotation2d.fromDegrees(canEncoder.getAbsolutePosition());
   }
 
   @Override
@@ -137,6 +136,6 @@ public class FalconSwerveModule implements SwerveModule {
 
   @Override
   public double getAbsoluteTurnDegrees() {
-    return MathUtil.inputModulus(getAbsoluteAngle().getDegrees(), 0, 360);
+    return getAbsoluteAngle().getDegrees();
   }
 }

@@ -9,11 +9,11 @@ import frc.robot.Constants.SwerveConstants;
 /** Add your docs here. */
 public class Conversions {
   public static double falconToDegrees(double falcon) {
-    return falcon * (360 / 2048);
+    return falcon * (360 / (SwerveConstants.turnGearRatio * 2048));
   }
 
   public static double degreesToFalcon(double degrees) {
-    return degrees * (2048 / 360);
+    return degrees * (SwerveConstants.turnGearRatio * 2048 / 360);
   }
 
   public static double falconToMeters(double falcon) {

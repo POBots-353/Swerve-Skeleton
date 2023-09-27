@@ -26,13 +26,13 @@ public final class Constants {
   }
 
   public static class SwerveConstants {
-    public static final double WIDTH = 0.353;
-    public static final double LENGTH = 0.353;
+    public static final double TRACK_WIDTH = 0.55;
+    public static final double WHEEL_BASE = 0.55;
 
-    public static final Translation2d frontLeft = new Translation2d(WIDTH * 0.5, LENGTH * 0.5);
-    public static final Translation2d frontRight = new Translation2d(WIDTH * 0.5, LENGTH * -0.5);
-    public static final Translation2d backLeft = new Translation2d(WIDTH * -0.5, LENGTH * 0.5);
-    public static final Translation2d backRight = new Translation2d(WIDTH * -0.5, LENGTH * -0.5);
+    public static final Translation2d frontLeft = new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2);
+    public static final Translation2d frontRight = new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2);
+    public static final Translation2d backLeft = new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2);
+    public static final Translation2d backRight = new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2);
 
     public static final Translation2d[] wheelLocations = { frontLeft, frontRight, backLeft, backRight };
 

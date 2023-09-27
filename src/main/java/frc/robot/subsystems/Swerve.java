@@ -121,19 +121,19 @@ public class Swerve extends SubsystemBase {
     field.setRobotPose(swerveOdometry.update(getRotation(), getModulePositions()));
 
     SmartDashboard.putNumber("Front Left Velocity", frontLeftModule.getVelocity());
-    SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getTurnDegrees());
-    SmartDashboard.putNumber("Front Left Absolute Rotation", frontLeftModule.getAbsoluteTurnDegrees());
+    SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getAngle().getDegrees());
+    SmartDashboard.putNumber("Front Left Absolute Rotation", frontLeftModule.getAbsoluteAngle().getDegrees());
 
     SmartDashboard.putNumber("Front Right Velocity", frontRightModule.getVelocity());
-    SmartDashboard.putNumber("Front Right Rotation", frontRightModule.getTurnDegrees());
-    SmartDashboard.putNumber("Front Right Absolute Rotation", frontRightModule.getAbsoluteTurnDegrees());
+    SmartDashboard.putNumber("Front Right Rotation", frontRightModule.getAngle().getDegrees());
+    SmartDashboard.putNumber("Front Right Absolute Rotation", frontRightModule.getAbsoluteAngle().getDegrees());
 
     SmartDashboard.putNumber("Back Left Velocity", backLeftModule.getVelocity());
-    SmartDashboard.putNumber("Back Left Rotation", backLeftModule.getTurnDegrees());
-    SmartDashboard.putNumber("Back Left Absolute Rotation", backLeftModule.getAbsoluteTurnDegrees());
+    SmartDashboard.putNumber("Back Left Rotation", backLeftModule.getAngle().getDegrees());
+    SmartDashboard.putNumber("Back Left Absolute Rotation", backLeftModule.getAbsoluteAngle().getDegrees());
 
     SmartDashboard.putNumber("Back Right Velocity", backRightModule.getVelocity());
-    SmartDashboard.putNumber("Back Right Rotation", backRightModule.getTurnDegrees());
-    SmartDashboard.putNumber("Back Right Absolute Rotation", backRightModule.getAbsoluteTurnDegrees());
+    SmartDashboard.putNumber("Back Right Rotation", backRightModule.getAngle().getDegrees());
+    SmartDashboard.putNumber("Back Right Absolute Rotation", backRightModule.getAbsoluteAngle().getDegrees());
   }
 }

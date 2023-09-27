@@ -14,8 +14,6 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -144,20 +142,5 @@ public class SparkMaxSwerveModule implements SwerveModule {
   @Override
   public Rotation2d getAbsoluteAngle() {
     return Rotation2d.fromDegrees(canEncoder.getAbsolutePosition());
-  }
-
-  @Override
-  public double getTurnRotations() {
-    return getAngle().getRotations();
-  }
-
-  @Override
-  public double getTurnDegrees() {
-    return getAngle().getDegrees();
-  }
-
-  @Override
-  public double getAbsoluteTurnDegrees() {
-    return getAbsoluteAngle().getDegrees();
   }
 }

@@ -11,8 +11,6 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -122,20 +120,5 @@ public class FalconSwerveModule implements SwerveModule {
   @Override
   public Rotation2d getAbsoluteAngle() {
     return Rotation2d.fromDegrees(canEncoder.getAbsolutePosition());
-  }
-
-  @Override
-  public double getTurnRotations() {
-    return getAngle().getRotations();
-  }
-
-  @Override
-  public double getTurnDegrees() {
-    return getAngle().getDegrees();
-  }
-
-  @Override
-  public double getAbsoluteTurnDegrees() {
-    return getAbsoluteAngle().getDegrees();
   }
 }

@@ -41,7 +41,7 @@ public final class Constants {
 
     public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
     public static final double driveGearRatio = 1 / 6.12;
-    public static final double turnGearRatio = 1 / (150 / 7);
+    public static final double turnGearRatio = 1 / (150.0 / 7.0);
 
     public static final double drivePositionConversion = wheelCircumference * driveGearRatio;
     public static final double driveVelocityConversion = drivePositionConversion / 60;

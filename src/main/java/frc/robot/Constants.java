@@ -61,6 +61,14 @@ public final class Constants {
     public static final double turnP = 0.3;
     public static final double turnD = 0;
 
+    public static final double openLoopRamp = 0.25;
+    public static final double closedLoopRamp = 0.0;
+
+    public static final double voltageCompensation = 12.0;
+
+    public static final int driveCurrentLimit = 80;
+    public static final int turnCurrentLimit = 20;
+
     public static final double maxModuleSpeed = Units.feetToMeters(14.5);
 
     public static class AutoConstants {

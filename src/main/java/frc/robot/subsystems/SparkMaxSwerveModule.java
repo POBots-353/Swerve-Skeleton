@@ -63,6 +63,14 @@ public class SparkMaxSwerveModule implements SwerveModule {
   }
 
   public void configureDriveMotor() {
+    driveMotor.setInverted(SwerveConstants.driveMotorInverted);
+
+    driveMotor.setOpenLoopRampRate(SwerveConstants.openLoopRamp);
+    driveMotor.setClosedLoopRampRate(SwerveConstants.closedLoopRamp);
+
+    driveMotor.enableVoltageCompensation(SwerveConstants.voltageCompensation);
+    driveMotor.setSmartCurrentLimit(SwerveConstants.driveCurrentLimit);
+
     drivePID = driveMotor.getPIDController();
 
     drivePID.setP(SwerveConstants.driveP);
@@ -70,12 +78,14 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
     driveEncoder.setPositionConversionFactor(SwerveConstants.drivePositionConversion);
     driveEncoder.setVelocityConversionFactor(SwerveConstants.driveVelocityConversion);
-
-    driveMotor.setInverted(SwerveConstants.driveMotorInverted);
   }
 
   public void configureTurnMotor() {
     turnMotor.setInverted(SwerveConstants.turnMotorInverted);
+
+    turnMotor.enableVoltageCompensation(SwerveConstants.voltageCompensation);
+    turnMotor.setSmartCurrentLimit(SwerveConstants.turnCurrentLimit);
+
     turnEncoder.setPositionConversionFactor(SwerveConstants.turnPositionConversion);
 
     turnPID = turnMotor.getPIDController();

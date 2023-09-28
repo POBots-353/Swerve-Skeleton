@@ -49,12 +49,18 @@ public class FalconSwerveModule implements SwerveModule {
   }
 
   private void configureDriveMotor() {
-    driveMotor.config_kP(0, SwerveConstants.driveP);
-
     driveMotor.configPeakOutputForward(1.0);
     driveMotor.configPeakOutputReverse(-1.0);
 
     driveMotor.setInverted(SwerveConstants.driveMotorInverted);
+
+    driveMotor.configOpenloopRamp(SwerveConstants.openLoopRamp);
+    driveMotor.configClosedloopRamp(SwerveConstants.closedLoopRamp);
+
+    driveMotor.enableVoltageCompensation(true);
+    driveMotor.configVoltageCompSaturation(SwerveConstants.voltageCompensation);
+
+    driveMotor.config_kP(0, SwerveConstants.driveP);
   }
 
   private void configureTurnMotor() {
@@ -62,6 +68,9 @@ public class FalconSwerveModule implements SwerveModule {
     turnMotor.configPeakOutputReverse(-1.0);
 
     turnMotor.setInverted(SwerveConstants.turnMotorInverted);
+
+    turnMotor.enableVoltageCompensation(true);
+    turnMotor.configVoltageCompSaturation(SwerveConstants.voltageCompensation);
 
     turnMotor.config_kP(0, SwerveConstants.turnP);
     turnMotor.config_kD(0, SwerveConstants.turnD);

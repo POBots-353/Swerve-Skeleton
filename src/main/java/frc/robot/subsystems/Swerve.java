@@ -47,6 +47,8 @@ public class Swerve extends SubsystemBase {
 
   private Field2d field = new Field2d();
 
+  private boolean isOpenLoop = false;
+
   /** Creates a new Swerve. */
   public Swerve() {
     swerveOdometry = new SwerveDriveOdometry(swerveKinematics, navx.getRotation2d(), getModulePositions());
@@ -75,23 +77,50 @@ public class Swerve extends SubsystemBase {
    * @param turn    The angular velocity of the robot (CW is +)
    */
   public void driveFieldOriented(double forward, double strafe, double turn) {
+    driveFieldOriented(forward, strafe, turn, false);
+  }
+
+  /**
+   * Drives the robot relative to the field
+   * 
+   * @param forward    The forward velocity of the robot. Positive is going away
+   *                   from your alliance wall
+   * @param strafe     The sideways velocity of the robot. Positive is going to
+   *                   the right when you are standing behind the alliance wall
+   * @param turn       The angular velocity of the robot (CW is +)
+   * @param isOpenLoop Weather the drive motors should be open loop
+   */
+  public void driveFieldOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
     ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, -strafe, -turn, getRotation());
-    setChassisSpeeds(chassisSpeeds);
+    setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
 
   public void driveRobotOriented(double forward, double strafe, double turn) {
+    driveRobotOriented(forward, strafe, turn, false);
+  }
+
+  public void driveRobotOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
     ChassisSpeeds chassisSpeeds = new ChassisSpeeds(forward, -strafe, -turn);
-    setChassisSpeeds(chassisSpeeds);
+    setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
 
   public void setChassisSpeeds(ChassisSpeeds speeds) {
-    setModuleStates(swerveKinematics.toSwerveModuleStates(speeds));
+    setChassisSpeeds(speeds, false);
+  }
+
+  public void setChassisSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
+    setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
+    setModuleStates(states, false);
+  }
+
+  public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.maxModuleSpeed);
 
     targetStates = states;
+    this.isOpenLoop = isOpenLoop;
   }
 
   public SwerveDriveKinematics getKinematics() {
@@ -113,10 +142,10 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    frontLeftModule.setState(targetStates[0]);
-    frontRightModule.setState(targetStates[1]);
-    backLeftModule.setState(targetStates[2]);
-    backRightModule.setState(targetStates[3]);
+    frontLeftModule.setState(targetStates[0], isOpenLoop);
+    frontRightModule.setState(targetStates[1], isOpenLoop);
+    backLeftModule.setState(targetStates[2], isOpenLoop);
+    backRightModule.setState(targetStates[3], isOpenLoop);
 
     field.setRobotPose(swerveOdometry.update(getRotation(), getModulePositions()));
 

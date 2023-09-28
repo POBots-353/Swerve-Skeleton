@@ -115,16 +115,21 @@ public class SparkMaxSwerveModule implements SwerveModule {
   }
 
   @Override
-  public void setState(SwerveModuleState state) {
+  public void setState(SwerveModuleState state, boolean isOpenLoop) {
     SwerveModuleState optimizedState = SwerveModuleState.optimize(state, getAngle());
 
     turnPID.setReference(optimizedState.angle.getRadians(), ControlType.kPosition);
 
     double currentVelocity = optimizedState.speedMetersPerSecond;
-    double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
 
-    drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward,
-        ArbFFUnits.kVoltage);
+    if (isOpenLoop) {
+      driveMotor.set(currentVelocity / SwerveConstants.maxModuleSpeed);
+    } else {
+      double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
+
+      drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward,
+          ArbFFUnits.kVoltage);
+    }
 
     prevVelocity = currentVelocity;
   }

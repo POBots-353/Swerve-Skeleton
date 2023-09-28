@@ -92,16 +92,21 @@ public class FalconSwerveModule implements SwerveModule {
   }
 
   @Override
-  public void setState(SwerveModuleState state) {
+  public void setState(SwerveModuleState state, boolean isOpenLoop) {
     SwerveModuleState optimizedState = CTREModuleState.optimize(state, getAngle());
 
     turnMotor.set(ControlMode.Position, Conversions.degreesToFalcon(optimizedState.angle.getDegrees()));
 
     double currentVelocity = optimizedState.speedMetersPerSecond;
-    double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
 
-    driveMotor.set(ControlMode.Velocity, Conversions.mpsToFalcon(optimizedState.speedMetersPerSecond),
-        DemandType.ArbitraryFeedForward, feedForward);
+    if (isOpenLoop) {
+      driveMotor.set(ControlMode.PercentOutput, currentVelocity / SwerveConstants.maxModuleSpeed);
+    } else {
+      double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
+
+      driveMotor.set(ControlMode.Velocity, Conversions.mpsToFalcon(optimizedState.speedMetersPerSecond),
+          DemandType.ArbitraryFeedForward, feedForward);
+    }
 
     prevVelocity = currentVelocity;
   }

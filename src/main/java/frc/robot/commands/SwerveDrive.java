@@ -54,7 +54,7 @@ public class SwerveDrive extends CommandBase {
     double forwardMetersPerSecond = -forwardSpeed.getAsDouble() * maxTranslationalSpeed;
     double angularRadiansPerSecond = angleSpeed.getAsDouble() * maxAngularSpeed;
 
-    swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angularRadiansPerSecond);
+    swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angularRadiansPerSecond, true);
   }
 
   // Called once the command ends or is interrupted.

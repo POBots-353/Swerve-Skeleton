@@ -52,6 +52,8 @@ public final class Constants {
     public static final boolean turnMotorInverted = true;
     public static final boolean canCoderInverted = false;
 
+    public static final boolean chassisSkewCorrection = true;
+
     public static final double driveP = 0.25;
 
     public static final double driveKs = 0.2;
@@ -61,8 +63,8 @@ public final class Constants {
     public static final double turnP = 0.3;
     public static final double turnD = 0;
 
-    public static final double headingKP = 0.1;
-    public static final double headingKD = 0.01;
+    public static final double headingP = 0.1;
+    public static final double headingD = 0.01;
 
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;

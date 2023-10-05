@@ -25,8 +25,8 @@ public class SwerveDrive extends CommandBase {
 
   private Swerve swerve;
 
-  private PIDController turnToAngleController = new PIDController(SwerveConstants.headingKP, 0,
-      SwerveConstants.headingKD);
+  private PIDController turnToAngleController = new PIDController(SwerveConstants.headingP, 0,
+      SwerveConstants.headingD);
 
   private final boolean isOpenLoop = true;
 

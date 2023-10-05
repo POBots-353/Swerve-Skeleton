@@ -8,6 +8,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -22,6 +23,7 @@ import frc.robot.Constants.SwerveConstants.BackLeftModule;
 import frc.robot.Constants.SwerveConstants.BackRightModule;
 import frc.robot.Constants.SwerveConstants.FrontLeftModule;
 import frc.robot.Constants.SwerveConstants.FrontRightModule;
+import frc.robot.util.GeometryUtil;
 
 public class Swerve extends SubsystemBase {
   private SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(SwerveConstants.wheelLocations);
@@ -109,6 +111,20 @@ public class Swerve extends SubsystemBase {
   }
 
   public void setChassisSpeeds(ChassisSpeeds speeds, boolean isOpenLoop) {
+    // Open loop compensation to correct for skewing
+    // Made by Team 254
+    // https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/5
+    if (SwerveConstants.chassisSkewCorrection) {
+      double dt = 0.020;
+
+      Pose2d robotPoseVelocity = new Pose2d(speeds.vxMetersPerSecond * dt,
+          speeds.vyMetersPerSecond * dt, Rotation2d.fromRadians(speeds.omegaRadiansPerSecond * dt));
+
+      Twist2d twistVelocity = GeometryUtil.poseLog(robotPoseVelocity);
+
+      speeds = new ChassisSpeeds(twistVelocity.dx / dt, twistVelocity.dy / dt, twistVelocity.dtheta / dt);
+    }
+
     setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
   }
 

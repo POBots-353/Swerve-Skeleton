@@ -19,11 +19,11 @@ public class FollowPath extends PPSwerveControllerCommand {
 
   /** Creates a new FollowPath. */
   public FollowPath(PathPlannerTrajectory trajectory, Swerve swerve) {
-    super(trajectory, swerve::getPose, swerve.getKinematics(),
+    super(trajectory, swerve::getPose,
         new PIDController(AutoConstants.translationalP, AutoConstants.translationalI, AutoConstants.translationalD),
         new PIDController(AutoConstants.translationalP, AutoConstants.translationalI, AutoConstants.translationalD),
         new PIDController(AutoConstants.rotationalP, AutoConstants.rotationalI, AutoConstants.rotationalD),
-        swerve::setModuleStates, true, swerve);
+        swerve::setChassisSpeeds, true, swerve);
 
     this.swerve = swerve;
     this.trajectory = trajectory;

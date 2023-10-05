@@ -61,6 +61,9 @@ public final class Constants {
     public static final double turnP = 0.3;
     public static final double turnD = 0;
 
+    public static final double headingKP = 0.1;
+    public static final double headingKD = 0.01;
+
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 

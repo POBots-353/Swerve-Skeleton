@@ -5,8 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Swerve;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +30,8 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(
       OperatorConstants.driverControllerPort);
 
+  private final XboxController driverControllerHID = driverController.getHID();
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -36,7 +40,9 @@ public class RobotContainer {
     configureBindings();
 
     swerve.setDefaultCommand(
-        new SwerveDrive(driverController::getLeftY, driverController::getLeftX, driverController::getRightX, swerve));
+        new SwerveDrive(driverController::getLeftY, driverController::getLeftX,
+            driverController::getRightX, driverController::getRightY, driverControllerHID::getLeftBumper,
+            SwerveConstants.maxTranslationalSpeed, SwerveConstants.maxAngularSpeed, swerve));
   }
 
   /**

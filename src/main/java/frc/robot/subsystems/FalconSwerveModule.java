@@ -102,7 +102,7 @@ public class FalconSwerveModule implements SwerveModule {
     if (isOpenLoop) {
       driveMotor.set(ControlMode.PercentOutput, currentVelocity / SwerveConstants.maxModuleSpeed);
     } else {
-      double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
+      double feedForward = driveFeedforward.calculate(currentVelocity, (currentVelocity - prevVelocity) / 0.020);
 
       driveMotor.set(ControlMode.Velocity, Conversions.mpsToFalcon(optimizedState.speedMetersPerSecond),
           DemandType.ArbitraryFeedForward, feedForward);

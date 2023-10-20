@@ -125,7 +125,7 @@ public class SparkMaxSwerveModule implements SwerveModule {
     if (isOpenLoop) {
       driveMotor.set(currentVelocity / SwerveConstants.maxModuleSpeed);
     } else {
-      double feedForward = driveFeedforward.calculate(prevVelocity, currentVelocity, 0.020);
+      double feedForward = driveFeedforward.calculate(currentVelocity, (currentVelocity - prevVelocity) / 0.020);
 
       drivePID.setReference(optimizedState.speedMetersPerSecond, ControlType.kVelocity, 0, feedForward,
           ArbFFUnits.kVoltage);

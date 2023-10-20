@@ -54,11 +54,11 @@ public final class Constants {
 
     public static final boolean chassisSkewCorrection = true;
 
-    public static final double driveP = 0.25;
+    public static final double driveP = 0.1;
 
     public static final double driveKs = 0.2;
     public static final double driveKv = 2.5;
-    public static final double driveKa = 0.34;
+    public static final double driveKa = 0.24;
 
     public static final double turnP = 0.3;
     public static final double turnD = 0;

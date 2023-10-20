@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -55,8 +57,30 @@ public class Swerve extends SubsystemBase {
   public Swerve() {
     swerveOdometry = new SwerveDriveOdometry(swerveKinematics, navx.getRotation2d(), getModulePositions());
 
-    SmartDashboard.putData("NavX Sensor", navx);
-    SmartDashboard.putData("Odometry", field);
+    SmartDashboard.putData("Gyro", navx);
+    SmartDashboard.putData("Field", field);
+
+    // Puts the swerve drive widget on the dashboard
+    SmartDashboard.putData("Swerve Drive", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+
+        builder.addDoubleProperty("Front Left Angle", () -> frontLeftModule.getAngle().getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Front Right Angle", () -> frontRightModule.getAngle().getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getAngle().getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getDegrees(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+
+        builder.addDoubleProperty("Robot Angle", () -> getRotation().getDegrees(), null);
+      }
+    });
   }
 
   public SwerveModulePosition[] getModulePositions() {

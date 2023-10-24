@@ -70,13 +70,13 @@ public class Swerve extends SubsystemBase {
         builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
 
         builder.addDoubleProperty("Front Right Angle", () -> frontRightModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> frontRightModule.getVelocity(), null);
 
         builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> backLeftModule.getVelocity(), null);
 
         builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> frontRightModule.getVelocity(), null);
 
         builder.addDoubleProperty("Robot Angle", () -> getRotation().getDegrees(), null);
       }
@@ -149,7 +149,22 @@ public class Swerve extends SubsystemBase {
       speeds = new ChassisSpeeds(twistVelocity.dx / dt, twistVelocity.dy / dt, twistVelocity.dtheta / dt);
     }
 
-    setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
+    if (speeds.vxMetersPerSecond == 0.0 && speeds.vyMetersPerSecond == 0.0
+        && speeds.omegaRadiansPerSecond == 0.0) {
+      lockModules(isOpenLoop);
+    } else {
+      setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
+    }
+  }
+
+  public void lockModules() {
+    lockModules(false);
+  }
+
+  public void lockModules(boolean isOpenLoop) {
+    setModuleStates(new SwerveModuleState[] { new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45)) }, isOpenLoop);
   }
 
   public void setModuleStates(SwerveModuleState[] states) {
@@ -168,7 +183,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public Rotation2d getRotation() {
-    return navx.getRotation2d();
+    return Rotation2d.fromDegrees(0);
+    // return navx.getRotation2d();
   }
 
   public Pose2d getPose() {

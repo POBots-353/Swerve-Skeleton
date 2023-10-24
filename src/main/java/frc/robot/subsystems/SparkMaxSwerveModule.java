@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -71,6 +72,10 @@ public class SparkMaxSwerveModule implements SwerveModule {
     driveMotor.enableVoltageCompensation(SwerveConstants.voltageCompensation);
     driveMotor.setSmartCurrentLimit(SwerveConstants.driveCurrentLimit);
 
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
+
     drivePID = driveMotor.getPIDController();
 
     drivePID.setP(SwerveConstants.driveP);
@@ -85,6 +90,11 @@ public class SparkMaxSwerveModule implements SwerveModule {
 
     turnMotor.enableVoltageCompensation(SwerveConstants.voltageCompensation);
     turnMotor.setSmartCurrentLimit(SwerveConstants.turnCurrentLimit);
+
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500);
+    turnMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500);
 
     turnEncoder.setPositionConversionFactor(SwerveConstants.turnPositionConversion);
 

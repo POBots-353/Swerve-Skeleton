@@ -74,7 +74,7 @@ public final class Constants {
 
     public static final double voltageCompensation = 12.0;
 
-    public static final int driveCurrentLimit = 80;
+    public static final int driveCurrentLimit = 60;
     public static final int turnCurrentLimit = 20;
 
     public static final double maxModuleSpeed = Units.feetToMeters(14.5);

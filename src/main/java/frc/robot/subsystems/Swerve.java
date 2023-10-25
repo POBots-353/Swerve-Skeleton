@@ -149,12 +149,7 @@ public class Swerve extends SubsystemBase {
       speeds = new ChassisSpeeds(twistVelocity.dx / dt, twistVelocity.dy / dt, twistVelocity.dtheta / dt);
     }
 
-    if (speeds.vxMetersPerSecond == 0.0 && speeds.vyMetersPerSecond == 0.0
-        && speeds.omegaRadiansPerSecond == 0.0) {
-      lockModules(isOpenLoop);
-    } else {
-      setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
-    }
+    setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
   }
 
   public void lockModules() {

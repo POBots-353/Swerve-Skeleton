@@ -62,6 +62,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     driverController.x().whileTrue(Commands.run(swerve::lockModules, swerve));
+
+    driverController.start().and(driverController.back()).toggleOnTrue(Commands.runOnce(swerve::zeroYaw));
   }
 
   /**

@@ -177,9 +177,16 @@ public class Swerve extends SubsystemBase {
     return swerveKinematics;
   }
 
+  public void zeroYaw() {
+    Pose2d originalOdometryPosition = getPose();
+    
+    navx.setAngleAdjustment(-navx.getYaw());
+
+    swerveOdometry.resetPosition(getRotation(), getModulePositions(), originalOdometryPosition);
+  }
+
   public Rotation2d getRotation() {
-    return Rotation2d.fromDegrees(0);
-    // return navx.getRotation2d();
+    return navx.getRotation2d();
   }
 
   public Pose2d getPose() {

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -52,6 +53,7 @@ public class SwerveDrive extends CommandBase {
     this.swerve = swerve;
 
     turnToAngleController.enableContinuousInput(-Math.PI, Math.PI);
+    turnToAngleController.setTolerance(Units.degreesToRadians(1.0));
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
@@ -74,7 +76,7 @@ public class SwerveDrive extends CommandBase {
   public void execute() {
     double strafeMetersPerSecond = strafeSpeed.getAsDouble() * maxTranslationalSpeed;
     double forwardMetersPerSecond = -forwardSpeed.getAsDouble() * maxTranslationalSpeed;
-    double angleXComponent = angleX.getAsDouble();
+    double angleXComponent = -angleX.getAsDouble();
     double angleYComponent = -angleY.getAsDouble();
 
     forwardMetersPerSecond = forwardRateLimiter.calculate(forwardMetersPerSecond);
@@ -103,12 +105,19 @@ public class SwerveDrive extends CommandBase {
     } else {
       angularRateLimiter.reset(0.0);
 
-      Rotation2d desiredAngle = new Rotation2d(angleXComponent, angleYComponent);
+      if (Math.abs(angleXComponent) > 0.05 || Math.abs(angleYComponent) > 0.05) {
+        Rotation2d desiredAngle = new Rotation2d(-angleXComponent, -angleYComponent);
 
-      double angularSpeed = turnToAngleController.calculate(swerve.getRotation().getRadians(),
-          desiredAngle.getRadians()) * maxAngularSpeed;
+        double angularSpeed = turnToAngleController.calculate(swerve.getRotation().getRadians(),
+            -desiredAngle.getRadians() - (Math.PI / 2));
 
-      swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angularSpeed, isOpenLoop);
+        angularSpeed = MathUtil.clamp(angularSpeed, -0.75, 0.75);
+
+        swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond,
+            angularSpeed * SwerveConstants.turnToAngleMaxVelocity, false);
+      } else {
+        swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, 0.0, isOpenLoop);
+      }
     }
   }
 

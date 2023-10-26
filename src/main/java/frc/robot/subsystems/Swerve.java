@@ -108,7 +108,7 @@ public class Swerve extends SubsystemBase {
    *                your alliance wall
    * @param strafe  The sideways velocity of the robot. Positive is going to the
    *                right when you are standing behind the alliance wall
-   * @param turn    The angular velocity of the robot (CW is +)
+   * @param turn    The angular velocity of the robot (CCW is +)
    */
   public void driveFieldOriented(double forward, double strafe, double turn) {
     driveFieldOriented(forward, strafe, turn, false);
@@ -121,11 +121,11 @@ public class Swerve extends SubsystemBase {
    *                   from your alliance wall
    * @param strafe     The sideways velocity of the robot. Positive is going to
    *                   the right when you are standing behind the alliance wall
-   * @param turn       The angular velocity of the robot (CW is +)
+   * @param turn       The angular velocity of the robot (CCW is +)
    * @param isOpenLoop Weather the drive motors should be open loop
    */
   public void driveFieldOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
-    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, -strafe, -turn, getRotation());
+    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, -strafe, turn, getRotation());
     setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
 
@@ -134,7 +134,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public void driveRobotOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
-    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(forward, -strafe, -turn);
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(forward, -strafe, turn);
     setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
 
@@ -147,7 +147,7 @@ public class Swerve extends SubsystemBase {
     // Made by Team 254
     // https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/5
     if (SwerveConstants.chassisSkewCorrection) {
-      double dt = 0.020;
+      double dt = 0.010;
 
       Pose2d robotPoseVelocity = new Pose2d(speeds.vxMetersPerSecond * dt,
           speeds.vyMetersPerSecond * dt, Rotation2d.fromRadians(speeds.omegaRadiansPerSecond * dt));
@@ -195,6 +195,10 @@ public class Swerve extends SubsystemBase {
 
   public Rotation2d getRotation() {
     return navx.getRotation2d();
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return swerveKinematics.toChassisSpeeds(getModuleStates());
   }
 
   public Pose2d getPose() {

@@ -57,8 +57,16 @@ public class Swerve extends SubsystemBase {
   public Swerve() {
     swerveOdometry = new SwerveDriveOdometry(swerveKinematics, navx.getRotation2d(), getModulePositions());
 
-    SmartDashboard.putData("Gyro", navx);
     SmartDashboard.putData("Field", field);
+
+    // Puts the Gyro on the dashboard
+    SmartDashboard.putData("Gyro", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Gyro");
+        builder.addDoubleProperty("Value", () -> getRotation().getDegrees(), null);
+      }
+    });
 
     // Puts the swerve drive widget on the dashboard
     SmartDashboard.putData("Swerve Drive", new Sendable() {
@@ -179,7 +187,7 @@ public class Swerve extends SubsystemBase {
 
   public void zeroYaw() {
     Pose2d originalOdometryPosition = getPose();
-    
+
     navx.setAngleAdjustment(-navx.getYaw());
 
     swerveOdometry.resetPosition(getRotation(), getModulePositions(), originalOdometryPosition);

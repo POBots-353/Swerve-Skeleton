@@ -28,8 +28,11 @@ import frc.robot.Constants.SwerveConstants.FrontRightModule;
 import frc.robot.util.GeometryUtil;
 
 public class Swerve extends SubsystemBase {
+  // Creates the SwerveDriveKinematics Object and specifies the wheel locations.
   private SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(SwerveConstants.wheelLocations);
 
+  /* Creates the four different swerve modules and in the constructor parementesr we put the drive motor ID, the 
+  turn motor ID, the encoder ID, and the default angle offset*/ 
   private SwerveModule frontLeftModule = new SparkMaxSwerveModule(FrontLeftModule.driveID, FrontLeftModule.turnID,
       FrontLeftModule.encoderID, FrontLeftModule.angleOffset);
 
@@ -42,9 +45,11 @@ public class Swerve extends SubsystemBase {
   private SwerveModule backRightModule = new SparkMaxSwerveModule(BackRightModule.driveID, BackRightModule.turnID,
       BackRightModule.encoderID, BackRightModule.angleOffset);
 
+  //
   private SwerveModuleState[] targetStates = { new SwerveModuleState(), new SwerveModuleState(),
       new SwerveModuleState(), new SwerveModuleState() };
-
+  
+  // Creates the Gyro, Odometry, and Field2d objects
   private AHRS navx = new AHRS(SPI.Port.kMXP);
 
   private SwerveDriveOdometry swerveOdometry;
@@ -53,10 +58,14 @@ public class Swerve extends SubsystemBase {
 
   private boolean isOpenLoop = false;
 
-  /** Creates a new Swerve. */
+  /* Creates a new Swerve. */
   public Swerve() {
+    /*Creates the swerve odometry class with constructor parameters that specify the swerve
+    kinematics, the rotation degree, and the positions of the swerve modules*/ 
     swerveOdometry = new SwerveDriveOdometry(swerveKinematics, navx.getRotation2d(), getModulePositions());
 
+    // Posts Gyro and Field data to SmartDashboard
+    SmartDashboard.putData("Gyro", navx);
     SmartDashboard.putData("Field", field);
 
     // Puts the Gyro on the dashboard
@@ -91,11 +100,13 @@ public class Swerve extends SubsystemBase {
     });
   }
 
+  // Gets the positions of the swerve modules.
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] { frontLeftModule.getModulePosition(), frontRightModule.getModulePosition(),
         backLeftModule.getModulePosition(), backRightModule.getModulePosition() };
   }
 
+  // Gets the state of the serve module (info about it's velocity and turn angle)
   public SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] { frontLeftModule.getModuleState(), frontRightModule.getModuleState(),
         backLeftModule.getModuleState(), backRightModule.getModuleState() };
@@ -124,7 +135,10 @@ public class Swerve extends SubsystemBase {
    * @param turn       The angular velocity of the robot (CW is +)
    * @param isOpenLoop Weather the drive motors should be open loop
    */
-  public void driveFieldOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
+
+  /*This drives the robot relative to the four different paremeters on the field, which are forward
+  strafe, turn, and isOpenLoop. Then, we used these pareameters to determine the ChassisSpeeds accordingly. */ 
+   public void driveFieldOriented(double forward, double strafe, double turn, boolean isOpenLoop) {
     ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, -strafe, -turn, getRotation());
     setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
@@ -138,6 +152,7 @@ public class Swerve extends SubsystemBase {
     setChassisSpeeds(chassisSpeeds, isOpenLoop);
   }
 
+  // Sets the chassis speeds relative to its location on the field.
   public void setChassisSpeeds(ChassisSpeeds speeds) {
     setChassisSpeeds(speeds, false);
   }
@@ -147,19 +162,25 @@ public class Swerve extends SubsystemBase {
     // Made by Team 254
     // https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/5
     if (SwerveConstants.chassisSkewCorrection) {
+      /*The unit of time where the robot is corrected for skewing. Essentially, it corrects for skewing
+      per dt seconds.*/
       double dt = 0.020;
 
+      // Used to calculate the change in the robot's position and orientation over the time frame.
       Pose2d robotPoseVelocity = new Pose2d(speeds.vxMetersPerSecond * dt,
           speeds.vyMetersPerSecond * dt, Rotation2d.fromRadians(speeds.omegaRadiansPerSecond * dt));
 
+      // This calculates the skew of the robot using the robotPoseVelocity.
       Twist2d twistVelocity = GeometryUtil.poseLog(robotPoseVelocity);
 
+      // Sets the new velocities for x, y, and turn per unit of dt.
       speeds = new ChassisSpeeds(twistVelocity.dx / dt, twistVelocity.dy / dt, twistVelocity.dtheta / dt);
     }
 
     setModuleStates(swerveKinematics.toSwerveModuleStates(speeds), isOpenLoop);
   }
 
+  // Sets the state of the Swerve Modules as well as defining the Swerve modules as not being open loop
   public void lockModules() {
     lockModules(false);
   }
@@ -174,6 +195,7 @@ public class Swerve extends SubsystemBase {
     setModuleStates(states, false);
   }
 
+  // This also sets the state of the swere modules but it changes the wheel speed based off of the max speed.
   public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop) {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.maxModuleSpeed);
 
@@ -213,8 +235,10 @@ public class Swerve extends SubsystemBase {
     backLeftModule.setState(targetStates[2], isOpenLoop);
     backRightModule.setState(targetStates[3], isOpenLoop);
 
+
     field.setRobotPose(swerveOdometry.update(getRotation(), getModulePositions()));
 
+    // SmartDashboard Stuff
     SmartDashboard.putNumber("Front Left Velocity", frontLeftModule.getVelocity());
     SmartDashboard.putNumber("Front Left Rotation", frontLeftModule.getAngle().getDegrees());
     SmartDashboard.putNumber("Front Left Absolute Rotation", frontLeftModule.getAbsoluteAngle().getDegrees());

@@ -8,7 +8,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.Swerve;
@@ -23,12 +25,16 @@ public class SwerveDrive extends CommandBase {
   private double maxTranslationalSpeed;
   private double maxAngularSpeed;
 
+  private SlewRateLimiter forwardRateLimiter = new SlewRateLimiter(SwerveConstants.maxTranslationalAcceleration);
+  private SlewRateLimiter strafeRateLimiter = new SlewRateLimiter(SwerveConstants.maxTranslationalAcceleration);
+  private SlewRateLimiter angularRateLimiter = new SlewRateLimiter(SwerveConstants.maxAngularAcceleration);
+
   private Swerve swerve;
 
   private PIDController turnToAngleController = new PIDController(SwerveConstants.headingP, 0,
       SwerveConstants.headingD);
 
-  private final boolean isOpenLoop = true;
+  private final boolean isOpenLoop = false;
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive(DoubleSupplier forwardSpeedSupplier, DoubleSupplier strafeSpeedSupplier,
@@ -71,10 +77,32 @@ public class SwerveDrive extends CommandBase {
     double angleXComponent = angleX.getAsDouble();
     double angleYComponent = -angleY.getAsDouble();
 
+    forwardMetersPerSecond = forwardRateLimiter.calculate(forwardMetersPerSecond);
+    strafeMetersPerSecond = strafeRateLimiter.calculate(strafeMetersPerSecond);
+
+    if (Math.abs(forwardMetersPerSecond) < 0.05) {
+      forwardMetersPerSecond = 0.0;
+      forwardRateLimiter.reset(0.0);
+    }
+
+    if (Math.abs(strafeMetersPerSecond) < 0.05) {
+      strafeMetersPerSecond = 0.0;
+      strafeRateLimiter.reset(0.0);
+    }
+
     if (!turnToAngle.getAsBoolean()) {
+      angleXComponent = angularRateLimiter.calculate(angleXComponent);
+
+      if (Math.abs(angleXComponent) < Units.degreesToRadians(1.0)) {
+        angleXComponent = 0.0;
+        angularRateLimiter.reset(0.0);
+      }
+
       swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angleXComponent * maxAngularSpeed,
           isOpenLoop);
     } else {
+      angularRateLimiter.reset(0.0);
+
       Rotation2d desiredAngle = new Rotation2d(angleXComponent, angleYComponent);
 
       double angularSpeed = turnToAngleController.calculate(swerve.getRotation().getRadians(),
@@ -87,6 +115,9 @@ public class SwerveDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    forwardRateLimiter.reset(0.0);
+    strafeRateLimiter.reset(0.0);
+    angularRateLimiter.reset(0.0);
   }
 
   // Returns true when the command should end.

@@ -68,6 +68,15 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putData("Gyro", navx);
     SmartDashboard.putData("Field", field);
 
+    // Puts the Gyro on the dashboard
+    SmartDashboard.putData("Gyro", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Gyro");
+        builder.addDoubleProperty("Value", () -> getRotation().getDegrees(), null);
+      }
+    });
+
     // Puts the swerve drive widget on the dashboard
     SmartDashboard.putData("Swerve Drive", new Sendable() {
       @Override
@@ -78,13 +87,13 @@ public class Swerve extends SubsystemBase {
         builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
 
         builder.addDoubleProperty("Front Right Angle", () -> frontRightModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> frontRightModule.getVelocity(), null);
 
         builder.addDoubleProperty("Back Left Angle", () -> backLeftModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> backLeftModule.getVelocity(), null);
 
         builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> frontLeftModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> frontRightModule.getVelocity(), null);
 
         builder.addDoubleProperty("Robot Angle", () -> getRotation().getDegrees(), null);
       }
@@ -172,6 +181,16 @@ public class Swerve extends SubsystemBase {
   }
 
   // Sets the state of the Swerve Modules as well as defining the Swerve modules as not being open loop
+  public void lockModules() {
+    lockModules(false);
+  }
+
+  public void lockModules(boolean isOpenLoop) {
+    setModuleStates(new SwerveModuleState[] { new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+        new SwerveModuleState(0, Rotation2d.fromDegrees(45)) }, isOpenLoop);
+  }
+
   public void setModuleStates(SwerveModuleState[] states) {
     setModuleStates(states, false);
   }
@@ -186,6 +205,14 @@ public class Swerve extends SubsystemBase {
 
   public SwerveDriveKinematics getKinematics() {
     return swerveKinematics;
+  }
+
+  public void zeroYaw() {
+    Pose2d originalOdometryPosition = getPose();
+
+    navx.setAngleAdjustment(-navx.getYaw());
+
+    swerveOdometry.resetPosition(getRotation(), getModulePositions(), originalOdometryPosition);
   }
 
   public Rotation2d getRotation() {

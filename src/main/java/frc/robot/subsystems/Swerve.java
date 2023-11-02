@@ -214,7 +214,7 @@ public class Swerve extends SubsystemBase {
   public void zeroYaw() {
     Pose2d originalOdometryPosition = getPose();
 
-    navx.setAngleAdjustment(-navx.getYaw());
+    navx.zeroYaw();
 
     swerveOdometry.resetPosition(getRotation(), getModulePositions(), originalOdometryPosition);
   }

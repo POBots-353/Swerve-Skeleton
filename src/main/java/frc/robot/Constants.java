@@ -36,10 +36,10 @@ public final class Constants {
 
     public static final Translation2d[] wheelLocations = { frontLeft, frontRight, backLeft, backRight };
 
-    public static final double maxTranslationalSpeed = Units.feetToMeters(4.5);
+    public static final double maxTranslationalSpeed = Units.feetToMeters(8.5);
     public static final double maxAngularSpeed = Units.degreesToRadians(180);
 
-    public static final double maxTranslationalAcceleration = Units.feetToMeters(14.5);
+    public static final double maxTranslationalAcceleration = Units.feetToMeters(30.0);
     public static final double maxAngularAcceleration = Units.degreesToRadians(360.0);
 
     public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
@@ -69,6 +69,9 @@ public final class Constants {
     public static final double headingP = 0.75;
     public static final double headingD = 0;
 
+    public static final double kpTranslation = 2.0;
+    public static final double kpRotation = 0.25;
+
     public static final double turnToAngleMaxVelocity = Units.degreesToRadians(180.0);
 
     public static final double openLoopRamp = 0.25;
@@ -85,11 +88,11 @@ public final class Constants {
       public static final double maxVelocity = 2.5;
       public static final double maxAcceleration = 2.5;
 
-      public static final double translationalP = 4.0;
+      public static final double translationalP = 8.0;
       public static final double translationalI = 0.0;
       public static final double translationalD = 0.0;
 
-      public static final double rotationalP = 8.0;
+      public static final double rotationalP = 4.0;
       public static final double rotationalI = 0.0;
       public static final double rotationalD = 0.0;
     }
@@ -98,28 +101,28 @@ public final class Constants {
       public static final int driveID = 4;
       public static final int turnID = 8;
       public static final int encoderID = 12;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(103.18359375);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(103.271484375);
     }
 
     public static class FrontRightModule {
       public static final int driveID = 2;
       public static final int turnID = 6;
       public static final int encoderID = 10;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(130.60546875);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(130.693359375);
     }
 
     public static class BackLeftModule {
       public static final int driveID = 1;
       public static final int turnID = 5;
       public static final int encoderID = 9;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(55.810546875);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(53.173828125);
     }
 
     public static class BackRightModule {
       public static final int driveID = 3;
       public static final int turnID = 7;
       public static final int encoderID = 11;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(266.8359375);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(266.923828125);
     }
   }
 }

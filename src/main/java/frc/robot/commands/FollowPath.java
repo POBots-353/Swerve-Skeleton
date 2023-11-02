@@ -40,4 +40,10 @@ public class FollowPath extends PPSwerveControllerCommand {
 
     super.initialize();
   }
+
+  @Override
+  public void end(boolean interrupted) {
+    super.end(interrupted);
+    swerve.lockModules();
+  }
 }

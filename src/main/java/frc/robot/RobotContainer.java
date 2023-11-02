@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.FollowPath;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.XboxController;
@@ -74,6 +75,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return new FollowPath("New New Path", swerve);
   }
 }

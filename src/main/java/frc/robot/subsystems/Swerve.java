@@ -188,8 +188,8 @@ public class Swerve extends SubsystemBase {
       ChassisSpeeds currentSpeeds = getChassisSpeeds();
       ChassisSpeeds desiredSpeeds = swerveKinematics.toChassisSpeeds(states);
 
-      if ((Math.abs(desiredSpeeds.vxMetersPerSecond) > 0.1 || Math.abs(desiredSpeeds.vyMetersPerSecond) > 0.1)
-          && Math.abs(desiredSpeeds.omegaRadiansPerSecond) > Units.degreesToRadians(1.0)) {
+      if ((Math.abs(desiredSpeeds.vxMetersPerSecond) > 0.5 || Math.abs(desiredSpeeds.vyMetersPerSecond) > 0.5)
+          && Math.abs(desiredSpeeds.omegaRadiansPerSecond) > Units.degreesToRadians(3.0)) {
         double vx = vxController.calculate(currentSpeeds.vxMetersPerSecond, desiredSpeeds.vxMetersPerSecond);
         double vy = vyController.calculate(currentSpeeds.vyMetersPerSecond, desiredSpeeds.vyMetersPerSecond);
         double vrotation = vthetaController.calculate(currentSpeeds.omegaRadiansPerSecond,

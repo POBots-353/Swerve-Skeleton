@@ -83,7 +83,7 @@ public class Swerve extends SubsystemBase {
         builder.addDoubleProperty("Back Left Velocity", () -> backLeftModule.getVelocity(), null);
 
         builder.addDoubleProperty("Back Right Angle", () -> backRightModule.getAngle().getDegrees(), null);
-        builder.addDoubleProperty("Back Right Velocity", () -> frontRightModule.getVelocity(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> backRightModule.getVelocity(), null);
 
         builder.addDoubleProperty("Robot Angle", () -> getRotation().getDegrees(), null);
       }

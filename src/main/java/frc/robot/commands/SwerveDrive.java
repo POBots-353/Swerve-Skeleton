@@ -35,7 +35,7 @@ public class SwerveDrive extends CommandBase {
   private PIDController turnToAngleController = new PIDController(SwerveConstants.headingP, 0,
       SwerveConstants.headingD);
 
-  private final boolean isOpenLoop = true;
+  private final boolean isOpenLoop = false;
 
   /** Creates a new SwerveDrive. */
   public SwerveDrive(DoubleSupplier forwardSpeedSupplier, DoubleSupplier strafeSpeedSupplier,
@@ -101,7 +101,7 @@ public class SwerveDrive extends CommandBase {
       }
 
       swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, angleXComponent * maxAngularSpeed,
-          true, isOpenLoop);
+          isOpenLoop);
     } else {
       angularRateLimiter.reset(0.0);
 
@@ -114,9 +114,9 @@ public class SwerveDrive extends CommandBase {
         angularSpeed = MathUtil.clamp(angularSpeed, -0.75, 0.75);
 
         swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond,
-            angularSpeed * SwerveConstants.turnToAngleMaxVelocity, true, false);
+            angularSpeed * SwerveConstants.turnToAngleMaxVelocity, false);
       } else {
-        swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, 0.0, true, isOpenLoop);
+        swerve.driveFieldOriented(forwardMetersPerSecond, strafeMetersPerSecond, 0.0, isOpenLoop);
       }
     }
   }
